@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdventureLand - Final Boss Battle</title>
+    <!-- Du trenger ikke gjøre noe med CSS-koden! -->
+    <link rel="stylesheet" href="css-skal-ikke-roeres/index.css">
+</head>
+<body>
+
+    <div id="container">     
+
+        <!--
+            Life bars 
+            - For å endre på life bar må dere få tak i div etter id, for eksempel "nameless-knight-hp-div".                       
+        -->
+        <div class="life-bar-container knight-container">     
+            <img src="images/knight-head.png">
+            <div class="life-bar" id="nameless-knight-hp-div"></div><!-- hp (Health Points) til ridderen -->
+        </div>
+
+        <div class="life-bar-container julia-container">
+            <img src="images/julia-head.png">
+            <div class="life-bar" id="julia-the-archer-hp-div"></div><!-- hp (Health Points) til Julia -->
+        </div>
+
+        <div class="life-bar-container cat-container">
+            <img src="images/cat-head.png" alt="">
+            <div class="life-bar" id="the-cat-hp-div"></div><!-- hp (Health Points) til katten -->
+        </div>
+
+        <div class="life-bar-container big-boss-container">
+            <img src="images/big-boss-head.png" alt="">
+            <div class="life-bar" id="big-boss-hp-div"></div><!-- hp (Health Points) til Big boss -->
+        </div>
+
+
+        <!-- The knight -->
+        <img id="nameless-knight" src="images/knight.png" alt="">
+       
+        <!-- Julia the archer -->
+        <img id="julia-the-archer" src="images/julia-the-archer.png">
+
+        <!-- The Cat -->
+        <img id="the-cat" src="images/cat.png" alt="">
+
+        <!-- William the healer -->
+        <img id="william-the-healer" src="images/healer.png">
+
+        <!-- Jack the lumberjack -->
+        <img id="jack-the-lumberjack" src="images/lumberjack.png" alt="">
+
+        <!-- The big evil boss -->
+        <img id="big-boss" src="images/big-boss.png" alt="">
+
+        <!-- Noen ganger dukker et monster opp her -->
+        <img id="appearing-monster" src="" alt=" ">
+
+
+    </div><!-- end container-->
+
+
+    <!-- Her skrives det ut informasjon om hva brukeren gjør og hva som skjer. -->
+    <div id="output-div">
+        <p>Her skal det skrives ut hva som skjer underveis i spillet. </p>
+    </div>
+
+
+<script>
+
+/*Oppretter monster/helte variabler med lett gjenkjennelige navn så man lett kan hente dette inn i koden*/
+/*Hadde orginalt et annet oppsett, men etter god hjelp og forklaring i hjelpetimene etter
+ udervisningen lærte vi en ny måte å deklarere på, og bruke funksjon på.*/
+
+
+    /* Skjuler de karakterene som vi ikke bruker */
+    var lumber = document.getElementById("jack-the-lumberjack");
+        lumber.style.display = "none";
+        var healer = document.getElementById("william-the-healer");
+        healer.style.display = "none";
+        
+
+        var outputDiv = document.getElementById("output-div");
+
+
+        var appearingMonster = {
+            img: document.getElementById("appearing-monster"),
+            name: "appearing monster",
+            health: 10,
+            maxHealth: 10,
+            damage: 2,
+        }
+
+        var namelessKnight = {
+            img: document.getElementById("nameless-knight"),
+            name: "Nameless Knight",
+            health: 20,
+            maxHealth: 20,
+            damage: 10,
+            lifeBar: document.getElementById("nameless-knight-hp-div"),
+        }
+
+        var juliaTheArcher = {
+            img: document.getElementById("julia-the-archer"),
+            name: "Julia the Archer",
+            health: 20,
+            maxHealth: 20,
+            damage: 10,
+            lifeBar: document.getElementById("julia-the-archer-hp-div"),
+        }
+
+        var theCat = {
+            img: document.getElementById("the-cat"),
+            name: "The Cat",
+            health: 20,
+            maxHealth: 20,
+            damage: 10,
+            lifeBar: document.getElementById("the-cat-hp-div"),
+        }
+
+        var bigBoss = {
+            img: document.getElementById("big-boss"),
+            name: "Big Boss",
+            health: 30,
+            maxHealth: 30,
+            damage: 5,
+            lifeBar: document.getElementById("big-boss-hp-div")
+        }
+/*Tømmer outputdiven*/
+        outputDiv.innerHTML = "";
+
+
+var heroesArray = [namelessKnight, juliaTheArcher, theCat];
+var appearingMonster2 = false;
+var randomMonster = "";
+
+for (var i = 0; i < heroesArray.length; i++) {
+    (function(hero) {
+        hero.img.onclick = function() {
+            heroAttack(hero);
+        };
+    })(heroesArray[i]); /*Lukker triggeren slik at alle heltene kan velges, og ikke bare den siste*/
+}
+
+function getRandomColor() { /*Funksjon for tilfeldig bakgrunnsfarge i outputdiv, lærte denne i undervisningen*/
+    var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
+
+        return `rgb(${r}, ${g}, ${b})`;
+}
+/*Heltene sin funksjon*/
+
+function heroAttack(hero) {
+    bossAttack();
+    if (bigBoss.health <= 0 || hero.health <= 0) {
+        /*Avslutter spillet dersom bossen er beseiret, og sørger for at en beiseiret helt ikke kan utføre mer skade*/
+        return;
+    }
+    var damage1 = Math.floor(Math.random() * 15);
+
+        outputDiv.style.backgroundColor = getRandomColor();
+        bigBoss.lifeBar.style.width = (bigBoss.health / bigBoss.maxHealth) * 100 + "%";
+        bigBoss.lifeBar.style.textAlign="left";
+        
+
+    if (appearingMonster2 == true) {
+        var target = appearingMonster;
+        target.health -= damage1;
+        outputDiv.innerHTML += `<p> ${hero.name} did ${damage1} damage to the appearing monster. </p>`;
+        
+
+    if (target.health <= 0) {
+        if (hero.name == "The Cat" && randomMonster == "Slime") {
+            appearingMonster.img.src = "";
+            appearingMonster2 = false;
+            outputDiv.innerHTML += `<p> The Cat eliminated the slime! </p> `;
+            outputDiv.style.backgroundColor = "lightpink";
+        } else if (hero.name == "Julia the Archer" && randomMonster == "Bat") {
+            appearingMonster.img.src = "";
+            appearingMonster2 = false;
+            outputDiv.innerHTML += `<p> Julia the Archer defeated the bat! </p>`;
+            outputDiv.style.backgroundColor = "lightsalmon";
+        } else {
+            appearingMonster2.health = 0;
+        }
+
+    }
+} else {
+        bigBoss.health -= damage1;
+        bigBoss.lifeBar.style.width = (bigBoss.health / bigBoss.maxHealth) * 100 + "%"; // Oppdater livsstangen
+
+    var appearingMonsterRoulette = Math.floor(Math.random() * 100) + 1;
+    bigBoss.lifeBar.textContent = `HP: ${bigBoss.health}`;
+
+    if (appearingMonsterRoulette <= 25) {
+        /* Avgjør om det blir slime eller bat som skal spawne inn*/
+        var batOrSlime = Math.random() * 2;
+        if (batOrSlime < 1) {
+            appearingMonster.img.src = "images/slime.png";
+            randomMonster = "Slime";
+            alert("The slime is spawning, only The Cat can kill it!");
+        } else {
+            appearingMonster.img.src = "images/bat.png";
+            randomMonster = "Bat";
+            alert("The bat is spawning, only Julia the Archer can defeat it!");
+        }
+        appearingMonster2 = true;
+    }
+
+    outputDiv.innerHTML += `<p> ${hero.name} did ${damage1} damage to the boss. </p>`;
+    outputDiv.style.backgroundColor = getRandomColor();
+    outputDiv.style.display = "flex";
+    outputDiv.style.flexDirection = "column-reverse";
+
+    if (bigBoss.health <= 0) {
+    bigBoss.health = 0; 
+    bigBoss.lifeBar.style.width = "0%"; 
+    bigBoss.lifeBar.textContent = `HP: 0`; 
+
+    if (hero.name === "Nameless Knight") {
+        outputDiv.innerHTML += `<p> Nameless Knight defeated the boss! </p>`;
+        outputDiv.style.backgroundColor = "green";
+        alert("WINNER! Du vant!");
+    } else {
+        bigBoss.health = 1;
+        bigBoss.lifeBar.textContent = `HP: 1`; 
+        outputDiv.innerHTML += `<p> Only Nameless Knight can defeat the boss! </p>`;
+        outputDiv.style.backgroundColor = "lightbrown";
+    }
+    }
+}
+}
+
+/*Big boss sin funksjon*/
+function bossAttack() {
+
+    var attack = Math.floor(Math.random() * heroesArray.length);
+    var randomHero = heroesArray[attack];
+    if (bigBoss.health <= 0) {
+        /*Sjekker om bossen har hp og avslutter angrepene hvis han ikke har*/
+        return;
+    }
+
+    if (randomHero.health <= 0) {
+        bossAttack(); /*Angriper annen helt om den han skulle ta er beseiret*/
+        return;
+    }
+
+    var damage2 = Math.floor(Math.random() * 10);
+    randomHero.health -= damage2;
+
+    /*Lifebar*/
+    randomHero.lifeBar.textContent = `HP: ${randomHero.health}`;
+    randomHero.lifeBar.style.width = (randomHero.health / randomHero.maxHealth) * 100 + "%";
+    
+
+    if (randomHero.health <= 0) {
+        outputDiv.innerHTML += `<p>BigBoss eliminated ${randomHero.name}</p>`;
+        randomHero.lifeBar.textContent = `HP: 0`;
+        randomHero.lifeBar.style.width = "0%"; 
+    } else {
+        outputDiv.innerHTML += `<p>BigBoss did ${damage2} damage to ${randomHero.name}</p>`;
+    }
+
+    if (checkAllHeroesDefeated()) {
+        alert("All heroes are defeated, you lost!");
+    }
+}
+
+/*Sjekker om det er noen helter igjen*/
+function checkAllHeroesDefeated() {
+    for (var i = 0; i < heroesArray.length; i++) {
+        if (heroesArray[i].health > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+/*
+- Man kan klikke på William the healer for å hele en eller flere av heltene
+- Bruk element.style-teknikken for å stilsette meldingene som skrives ut. For eksempel 
+når Julia angriper er bakgrunnen til meldingen grønn: Inkludert. 
+- Man må klikke på Jack the lumberjack for å lage piler til Julia; dvs. Julia har begrenset 
+antall piler.
+- Hvis Big Boss har mindre enn 20% liv så blir han større og tar 10% mindre skade.
+- Det skal dukke opp «Du vant!» hvis man vinner over Big Boss: Inkludert. 
+- Det skal dukke opp «Du tapte!»-melding hvis man taper: Inkludert.
+- Gjør bruk av setTimeout (se kodeeksempel nedenfor) for å utsette angrepet fra Big 
+boss og de andre slemme vesenene med 1-3 sekunder: Inkludert.
+- Egendefinert funksjonalitet: legg til noe du selv ønsker å ha med som du tenker er 
+kult å ha med! gjort. La til alert som sier ifra når et appearing monster spawner.
+
+5 stk inkludert. 
+*/
+
+
+</script>
+</body>
+</html>
